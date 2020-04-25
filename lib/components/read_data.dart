@@ -1,9 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 double height;
 double width;
 
-void readData(context, {height, width}) {
+void readData(context, {height, width}) async {
+  String name;
+  DocumentSnapshot _doc = await Firestore.instance
+      .collection('usersName')
+      .document('dummydata')
+      .get()
+      .timeout(Duration(seconds: 10));
+  (_doc.exists) ? name = _doc['name'] : name = null;
   showDialog(
     context: context,
     builder: (_) => Center(
@@ -21,13 +29,15 @@ void readData(context, {height, width}) {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                "Hi [Name], have a great day. And I hope you don't face any problems learning firebase",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
+              (name == null)
+                  ? Text('There is No user in the database')
+                  : Text(
+                      "Hi $name, have a great day. And I hope you don't face any problems learning firebase",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
               SizedBox(
                 height: 20,
               ),
